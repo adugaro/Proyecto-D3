@@ -6,7 +6,7 @@ contains
 
   ! ------------------------------------------------------------------
 
-  subroutine calculo_fyg (N_embriones, N_dim,masa,pos,vel,deltat)
+  subroutine calculo_fyg (nbig, N_dim,masa,pos,vel,deltat)
 
     use parametros
 
@@ -18,12 +18,12 @@ contains
     ! Variables Globales
     ! -------------------------------------------------- 
 
-    integer, intent(in) :: N_embriones
+    integer, intent(in) :: nbig
     integer, intent(in) :: N_dim
 
-    real(wp), dimension(N_embriones), intent (in) :: masa   
-    real(wp), dimension(N_embriones,N_dim), intent(inout) :: pos
-    real(wp), dimension(N_embriones,N_dim), intent(inout) :: vel
+    real(wp), dimension(nbig), intent (in) :: masa   
+    real(wp), dimension(nbig,N_dim), intent(inout) :: pos
+    real(wp), dimension(nbig,N_dim), intent(inout) :: vel
     real(wp), intent(in) :: deltat
 
     ! --------------------------------------------------
@@ -65,7 +65,7 @@ contains
 
     ! ==================================================
 
-    do k=1,N_embriones ! Para todos los embriones
+    do k=1,nbig ! Para todos los embriones
 
        do i=1,N_dim    ! Para las 3 componentes
           r0(i) = pos(k,i)
@@ -133,7 +133,7 @@ contains
           vel(k,i) = funFp * r0(i) + funGp * v0(i)
        end do
 
-    end do ! do k=1, N_embriones
+    end do ! do k=1, nbig
 
   end subroutine calculo_fyg
 

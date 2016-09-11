@@ -1,0 +1,21 @@
+Numero de Embriones
+1
+Numero de cuerpos menores
+0
+Dimensiones del problema 
+3
+Tiempo inicial de la simulacion
+0.0
+Tiempo final de la simulacion
+365.25E5
+Paso de integracion
+6.0
+Tiempo inicial para la escritura de datos
+0.0
+Paso de tiempo para la escritura
+365.25E3
+Nombre archivo de condiciones iniciales
+"big.in.mercurio"
+Nombre archivo de condiciones iniciales
+"small.en"
+
