@@ -1,6 +1,8 @@
 program n_cuerpos
   use iso_fortran_env, only :wp => REAL64
+  use hybrido
   use rutinas
+  use rutinas2
 
   ! ==================================================================
 
@@ -24,14 +26,17 @@ program n_cuerpos
   real(wp) :: enerant
   real(wp) :: mvsuma
   real(wp) :: kkk
-  integer :: N_embriones
+  integer :: nbig
+  integer :: nsmall
+  integer :: nbody
   integer :: N_dim
   integer :: i
   integer :: j
   integer :: k
   integer :: unidad
 
-  character(80)::archivo_cond_ini  
+  character(80)::nbig_cond_ini  
+  character(80)::nsmall_cond_ini
 
   ! ==================================================================
 
@@ -39,38 +44,20 @@ program n_cuerpos
   ! Lectura de parametros del sistema
   ! **************************************************
 
-  deltat = 6.0_wp 
-  deltatescr = 365.25E3_wp
-  T_inicial = 0.0_wp 
-  T_final =  365.25E5_wp
-  tescr = 0.0_wp
+  call leer_par_sist(nbig,nsmall,nbody,N_dim,t_inicial,t_final,deltat,tescr,deltatescr,nbig_cond_ini,nsmall_cond_ini)
 
-  N_embriones= 1
-  archivo_cond_ini = "big.in.mercurio"
-  N_dim=3
-
-  allocate(masa(N_embriones))
-  allocate(pos(N_embriones,N_dim))
-  allocate(vel(N_embriones,N_dim))
-  allocate(radio_hill(N_embriones))
-  allocate(rho(N_embriones))
+  allocate(masa(nbody))
+  allocate(pos(nbody,N_dim))
+  allocate(vel(nbody,N_dim))
+  allocate(radio_hill(nbody))
+  allocate(rho(nbody))
   allocate(velsol(N_dim))
 
   ! **************************************************
   ! Lectura de condiciones iniciales
   ! **************************************************
 
-  open(unit=10,file=archivo_cond_ini,status='old')
-
-  do i=1,N_embriones
-     read(10,'(14x,f23.17,3x,f5.0,3x,f4.2)') masa(i),radio_hill(i),rho(i)
-     read(10,*) (pos(i,j),j=1,N_dim)
-     read(10,*) (vel(i,j),j=1,N_dim)
-     read(10,*)
-  enddo
-
-  close(10)
-
+  call leer_cond_ini (nbig_cond_ini,nsmall_cond_ini,nbig,nsmall,nbody,N_dim,pos,vel,masa,radio_hill,rho)
 
   ! **************************************************
   ! Convertimos las velocidades de heliocentricas a
@@ -78,7 +65,7 @@ program n_cuerpos
   ! democraticas
   ! **************************************************
 
-  call helio2demo(pos, vel, masa, N_embriones, N_dim)
+  call helio2demo(pos, vel, masa, nbig, N_dim)
 
   ! ******************************************************************
 
@@ -101,13 +88,13 @@ program n_cuerpos
   t = 0.0
   do while (t<t_final)
 
-     call integracion(t,pos,vel,deltat,masa,N_embriones,N_dim)
+     call integracion(t,pos,vel,deltat,masa,nbig,N_dim)
 
      t = t + deltat
      tescr = tescr + deltat
 
      if (tescr > deltatescr) then
-        do k=1,N_embriones
+        do k=1,nbig
            unidad=30+k
            write(unidad,*) t, (pos(k,i),i=1,3), (vel(k,i),i=1,3), masa(k)
         end do
